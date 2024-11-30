@@ -10,18 +10,18 @@ import axios from 'axios';
 
 
 function Policy() {
+    // 상태 관리를 위한 useState 훅 정의
     const navigate = useNavigate();
-    // useState 추가
-    const [isTermsAgreed, setIsTermsAgreed] = useState(false);
-    const [haveToAgreed, setHaveToAgreed] = useState(''); // 에러 메시지 상태 추가
-    const termsBoxRef = useRef(null); // terms 섹션에 대한 ref 추가
-    const [showModal, setShowModal] = useState(false);
-    const [id, setId] = useState('');
-    const [password, setPassword] = useState('');
-    const [authError, setAuthError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    const [isTermsAgreed, setIsTermsAgreed] = useState(false);        // 약관 동의 상태
+    const [haveToAgreed, setHaveToAgreed] = useState('');            // 약관 동의 관련 에러 메시지
+    const [showModal, setShowModal] = useState(false);                // 모달 표시 상태
+    const [id, setId] = useState('');                                // 사용자 아이디
+    const [password, setPassword] = useState('');                     // 사용자 비밀번호
+    const [authError, setAuthError] = useState('');                  // 인증 에러 메시지
+    const [isLoading, setIsLoading] = useState(false);               // 로딩 상태
+    const termsBoxRef = useRef(null);                               // 약관 섹션 참조
 
-    // useEffect 추가
+    // 모달이 열릴 때 스크롤 방지
     useEffect(() => {
         if (showModal) {
             document.body.style.overflow = 'hidden';
@@ -97,14 +97,22 @@ function Policy() {
         }
     };
     
+    // 새로운 핸들러 함수 추가
+    const handleNoticeClick = () => {
+        navigate('/register');
+    };
+
     return (
         <div className={css(styles.policyContainer)}>
+            {/* 헤더 섹션 */}
             <Header />
             <Template title="회원가입" />
             <span className={css(styles.policyDescription)}>
                 졸업요건 검사 서비스 이용을 위해 약관 동의와 학생 인증이 필요합니다.        
             </span>
+            {/* 메인 컨텐츠 */}
             <main className={css(styles.contentContainer)} ref={termsBoxRef}>
+                {/* 약관 동의 섹션 */}
                 <div className={css(styles.termsSection)}>
                     <h3 className={css(styles.sectionTitle)}>이용약관 및 개인정보처리방침</h3>
                     {haveToAgreed && (
@@ -138,6 +146,7 @@ function Policy() {
                     </div>
                 </div>
 
+                {/* 학생 인증 섹션 */}
                 <div className={css(styles.authSection)}>
                     <h3 className={css(styles.sectionTitle)}>학생 인증</h3>
                     <div className={css(styles.authBox)}>
@@ -174,14 +183,21 @@ function Policy() {
                         >
                             재학생 인증
                         </button>
-                        <p className={css(styles.authNotice)}>
+                        <p 
+                            className={css(styles.authNotice)}
+                            onClick={handleNoticeClick}
+                            style={{ cursor: 'pointer' }}
+                        >
                             <b>교직, 편압학 대상자</b>에 해당하는 졸업요건은 반영되지 않아 회원가입이 불가합니다.
                         </p>
                     </div>
                 </div>
             </main>
+
+            {/* 푸터 */}
             <Footer />
             
+            {/* 로딩 모달 */}
             {showModal && (
                 <div className={css(styles.modalOverlay)}>
                     <div className={css(styles.modal)}>
@@ -233,11 +249,10 @@ const styles = StyleSheet.create({
     policyDescription: {
         fontSize: '15px',
         color: '#7A828A',
-        marginBottom: '8px',
         textAlign: 'center',
     },
     contentContainer: {
-        padding: '60px',
+        padding: '40px',
         paddingLeft: '266px',
         paddingRight: '266px',
     },
@@ -341,6 +356,10 @@ const styles = StyleSheet.create({
         color: '#006277',
         marginTop: '10px',
         marginLeft: '26px',
+        cursor: 'pointer',  // 마우스 호버 시 포인터 표시
+        ':hover': {
+            textDecoration: 'underline'  // 호버 시 밑줄 표시
+        }
     },
     haveToAgreed: {
         color: '#FF4B4B',
