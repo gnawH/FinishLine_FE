@@ -1,13 +1,20 @@
 import { StyleSheet, css } from 'aphrodite';
-import { Link } from 'react-router-dom'; // React Router의 Link 컴포넌트 import
+import { useNavigate, Link } from 'react-router-dom'; // React Router의 Link 컴포넌트 import
 import logo1 from '../assets/images/logo1.png';
 
 // Header 컴포넌트
 function Header() {
+    const navigate = useNavigate();
+
+    const handleLoginClick = () => {
+        navigate('/login');
+        window.scrollTo(0, 0); // 스크롤을 맨 위로 이동
+    };
+
     return (
         <header className={css(styles.header)}>
              {/* 로고 */}
-                <img src={logo1} alt="Logo" className={css(styles.logo)} />
+            <img src={logo1} alt="Logo" className={css(styles.logo)} />
 
 
             {/* 네비게이션 및 로그인 버튼 */}
@@ -17,7 +24,7 @@ function Header() {
                     <Link to="/graduateCheck" className={css(styles.navLink)}>졸업 요건 검사</Link>
                     <Link to="/기이수과목폴더 이름" className={css(styles.navLink)}>기이수 과목 관리</Link>  
                 </nav>
-                <button className={css(styles.loginButton)}>로그인</button>
+                <button className={css(styles.loginButton)} onClick={handleLoginClick}>로그인</button>
             </div>
         </header>
     );

@@ -1,11 +1,18 @@
 import { StyleSheet, css } from 'aphrodite';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Header from '../components/header'; // Header 컴포넌트 import
 import Footer from '../components/footer'; // Footer 컴포넌트 import
 import logo2 from '../assets/images/logo2.png'; // 로고 이미지 import
 
 // Login 컴포넌트
 function Login() {
+    const navigate = useNavigate();
+
+    const handleResisterClick = () => {
+        navigate('/policy');
+        window.scrollTo(0, 0); // 스크롤을 맨 위로 이동
+    };
+
     return (
         <div className={css(styles.loginContainer)}>
             {/* Header 컴포넌트 */}
@@ -45,7 +52,7 @@ function Login() {
                 <div className={css(styles.registerSection)}>
                     <div className={css(styles.line)}></div>
                     <span className={css(styles.registerText)}>아직 회원이 아니신가요?</span>
-                    <Link to="/policy" className={css(styles.registerLink)}>회원가입</Link>
+                    <Link to="/policy" className={css(styles.registerLink)} onClick={handleResisterClick}>회원가입</Link>
                     <div className={css(styles.line)}></div>
                 </div>
             </main>
