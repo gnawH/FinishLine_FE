@@ -57,43 +57,49 @@ function Policy() {
 
     // 인증 버튼 클릭 핸들러
     const handleAuth = async () => {
-        // 약관 동의 체크
-        if (!isTermsAgreed) {
-            setHaveToAgreed('이용약관 및 개인정보처리방침에 동의해주세요.');
-            termsBoxRef.current?.scrollIntoView({ behavior: 'smooth' });
-            return;
-        }
-
-        // 아이디, 비밀번호 유효성 검사
-        if (!id || !password) {
-            setAuthError('아이디와 비밀번호를 모두 입력해주세요.');
-            return;
-        }
-
-        setHaveToAgreed('');
-        setAuthError('');
-        setShowModal(true);
-        setIsLoading(true);
-
         try {
-            const response = await axios.post('/api/auth/student-verify', {
+            // 약관 동의 체크
+            if (!isTermsAgreed) {
+                setHaveToAgreed('이용약관 및 개인정보처리방침에 동의해주세요.');
+                termsBoxRef.current?.scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
+            // 아이디, 비밀번호 유효성 검사
+            if (!id || !password) {
+                setAuthError('아이디와 비밀번호를 모두 입력해주세요.');
+                return;
+            }
+
+            setHaveToAgreed('');
+            setAuthError('');
+            setShowModal(true);
+            setIsLoading(true);
+
+            const response = await axios.post('http://127.0.0.1:8000/student_auth/', {
                 id: id,
                 password: password
             });
 
-            if (response.data.success) {
-                // 인증 성공 시 다음 페이지로 이동
+            // 응답 데이터 확인
+            if (response.data && response.data.studentId && response.data.name && response.data.department) {
                 navigate('/register', { 
                     state: {
-                        studentInfo: response.data.studentInfo 
+                        studentInfo: {
+                            studentId: response.data.studentId,
+                            name: response.data.name,
+                            department: response.data.department
+                        }
                     }
                 });
+            } else {
+                setAuthError('학생 정보를 찾을 수 없습니다. 아이디와 비밀번호를 확인해주세요.');
             }
         } catch (error) {
-            setShowModal(false);
-            setAuthError('학생 정보를 찾을 수 없습니다. 아이디와 비밀번호를 확인해주세요.');
+            setAuthError('서버 연결에 실패했습니다. 잠시 후 다시 시도해주세요.');
         } finally {
             setIsLoading(false);
+            setShowModal(false);
         }
     };
     

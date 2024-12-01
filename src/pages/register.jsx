@@ -1,6 +1,6 @@
 import { StyleSheet, css } from 'aphrodite';
-import { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import Header from '../components/header';
 import Template from '../components/template';
 import Footer from '../components/footer';
@@ -99,13 +99,11 @@ const DEPARTMENTS = [
 
 function Register() {
     const location = useLocation();
-    const navigate = useNavigate();
-    const studentInfo = location.state?.studentInfo;
-
+    
     const [userData, setUserData] = useState({
-        name: '홍길동',
-        department: '소프트웨어학과',
-        studentId: '20240000'
+        name: location.state?.studentInfo?.name || '',
+        department: location.state?.studentInfo?.department || '',
+        studentId: location.state?.studentInfo?.studentId || ''
     });
 
     const [selectedMajorType, setSelectedMajorType] = useState('');
@@ -127,28 +125,6 @@ function Register() {
     const handleMicroDegreeChange = (e) => {
         setSelectedMicroDegree(e.target.value);
     };
-
-    useEffect(() => {
-        // API 호출 예시
-        const fetchUserData = async () => {
-            try {
-                const response = await fetch('/api/user-info');  // API 엔드포인트는 실제 경로로 수정 필요
-                const data = await response.json();
-                setUserData(data);
-            } catch (error) {
-                console.error('사용자 정보를 가져오는데 실패했습니다:', error);
-            }
-        };
-
-        fetchUserData();
-    }, []);
-
-    useEffect(() => {
-        if (!studentInfo) {
-            navigate('/policy');
-            return;
-        }
-    }, [navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -223,7 +199,7 @@ function Register() {
                         <label>이름</label>
                         <input 
                             type="text" 
-                            value={studentInfo?.name}
+                            value={userData.name}
                             readOnly
                             className={css(styles.input, styles.readOnlyInput)} 
                         />
@@ -232,7 +208,7 @@ function Register() {
                         <label>학과</label>
                         <input 
                             type="text" 
-                            value={studentInfo?.department}
+                            value={userData.department}
                             readOnly
                             className={css(styles.input, styles.readOnlyInput)} 
                         />
@@ -241,7 +217,7 @@ function Register() {
                         <label>학번</label>
                         <input 
                             type="text" 
-                            value={studentInfo?.studentId}
+                            value={userData.studentId}
                             readOnly
                             className={css(styles.input, styles.readOnlyInput)}
                         />
