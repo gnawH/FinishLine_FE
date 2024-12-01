@@ -5,23 +5,33 @@ import Footer from '../components/footer';
 import UploadPDF from '../components/uploadPDF';
 import LectureTable from '../components/lectureTable';
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function MyCompleteLecture() {
     const [searchCode, setSearchCode] = useState('');
-    const [searchResult, setSearchResult] = useState(null);
+    const [searchResult, setSearchResult] = useState([]);
 
     const handleSearch = async () => {
         try {
-            const response = await axios.get(`/api/lectures/search/`, {
+            const response = await axios.get('/api/lectures', {
                 params: {
-                    code: searchCode
-                }
+                    code: searchCode,
+                },
             });
             setSearchResult(response.data);
         } catch (error) {
-            console.error('과목 검색 중 오류 발생:', error);
-            alert('과목 검색 중 오류가 발생했습니다.');
+            console.error('Error searching lectures:', error);
+        }
+    };
+
+    const handleAddLecture = async () => {
+        try {
+            const response = await axios.post('/api/lectures', {
+                code: document.querySelector('select')?.value,
+            });
+            setSearchResult(prevResult => [...prevResult, response.data]);
+        } catch (error) {
+            console.error('Error adding lecture:', error);
         }
     };
 
@@ -41,11 +51,6 @@ function MyCompleteLecture() {
                             className={css(styles.searchInput)}
                             value={searchCode}
                             onChange={(e) => setSearchCode(e.target.value)}
-                            onKeyPress={(e) => {
-                                if (e.key === 'Enter') {
-                                    handleSearch();
-                                }
-                            }}
                         />
                         <button 
                             className={css(styles.searchButton)}
@@ -54,10 +59,20 @@ function MyCompleteLecture() {
                             검색
                         </button>
                     </div>
-                    <LectureTable />
-                    <div className={css(styles.addButtonContainer)}>
-                        <button className={css(styles.addButton)}>추가하기</button>
-                    </div>
+                    {searchResult && (
+                        <>
+                            <LectureTable data={searchResult} isSearchResult={true} />
+                            <div className={css(styles.addButtonContainer)}>
+                                <button 
+                                    className={css(styles.addButton)}
+                                    onClick={handleAddLecture}
+                                    disabled={!document.querySelector('select')?.value}
+                                >
+                                    추가하기
+                                </button>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
             <div className={css(styles.container)}>

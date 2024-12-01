@@ -1,6 +1,6 @@
 import { StyleSheet, css } from 'aphrodite';
 
-function LectureTable() {
+function LectureTable({ data, isSearchResult }) {
     return (
         <div className={css(styles.tableContainer)}>
             <table className={css(styles.table)}>
@@ -17,23 +17,31 @@ function LectureTable() {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td className={css(styles.cell)}>커스텀</td>
-                        <td className={css(styles.cell)}>2</td>
-                        <td className={css(styles.cell)}>742548-002</td>
-                        <td className={css(styles.cell)}>소프트웨어설계및구현</td>
-                        <td className={css(styles.cell)}>
-                            <select className={css(styles.select)}>
-                                <option value="">선택</option>
+                    {data && data.map((lecture, index) => (
+                        <tr key={index}>
+                            <td className={css(styles.cell)}>{lecture.year || '커스텀'}</td>
+                            <td className={css(styles.cell)}>{lecture.semester}</td>
+                            <td className={css(styles.cell)}>{lecture.code}</td>
+                            <td className={css(styles.cell)}>{lecture.name}</td>
+                            <td className={css(styles.cell)}>
+                                {isSearchResult ? (
+                                    <select className={css(styles.select)}>
+                                        <option value="">선택</option>
                                 <option value="전선">전선</option>
                                 <option value="전필">전필</option>
                                 <option value="교양">교양</option>
-                            </select>
-                        </td>
-                        <td className={css(styles.cell)}></td>
-                        <td className={css(styles.cell)}>3</td>
-                        <td className={css(styles.lastCell)}></td>
-                    </tr>
+                                <option value="소단위">소단위</option>
+                                <option value="복전">복전</option>
+                                <option value="부전공">부전공</option>
+                                <option value="연계">연계</option>
+                                    </select>
+                                ) : lecture.type}
+                            </td>
+                            <td className={css(styles.cell)}>{lecture.topic}</td>
+                            <td className={css(styles.cell)}>{lecture.credit}</td>
+                            <td className={css(styles.lastCell)}></td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         </div>
