@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { StyleSheet, css } from 'aphrodite';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function UploadPDF() {
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [fileNames, setFileNames] = useState([]);
+    const navigate = useNavigate();
 
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
@@ -27,32 +30,33 @@ function UploadPDF() {
         }
 
         const formData = new FormData();
-        selectedFiles.forEach((file, index) => {
+        selectedFiles.forEach((file) => {
             formData.append('files', file);
         });
 
         try {
-            const response = await fetch('/api/upload-pdf', {
-                method: 'POST',
-                body: formData,
+            const response = await axios.post('/api/upload-pdf', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
             });
-
-            if (!response.ok) {
-                throw new Error('파일 업로드에 실패했습니다.');
-            }
 
             alert('파일이 성공적으로 업로드되었습니다.');
             setSelectedFiles([]);
             setFileNames([]);
         } catch (error) {
             console.error('업로드 에러:', error);
-            alert('파일 업로드 중 오류가 발생했습니다.');
+            alert(error.response?.data?.message || '파일 업로드 중 오류가 발생했습니다.');
         }
     };
 
     const handleDeleteFile = (index) => {
         setSelectedFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
         setFileNames(prevNames => prevNames.filter((_, i) => i !== index));
+    };
+
+    const handleNoticeClick = () => {
+        navigate('/myCompleteLecture');
     };
 
     return (
@@ -106,9 +110,14 @@ function UploadPDF() {
                     등록하기
                 </button>
             </div>
-            <div className={css(styles.notice)}>
-            <b>가톨릭관동대학교 포털 &gt; 로그인 &gt; 종합정보시스템 &gt; 학적관리 &gt; 학기별 성적조회 및 출력 &gt; 인쇄 &gt; PDF로 저장</b><br></br>
-            계절학기 포함 모든 학기 PDF를 첨부해주세요.
+            <div 
+                className={css(styles.notice)} 
+                onClick={handleNoticeClick}
+                role="button"
+                tabIndex={0}
+            >
+                <b>가톨릭관동대학교 포털 &gt; 로그인 &gt; 종합정보시스템 &gt; 학적관리 &gt; 학기별 성적조회 및 출력 &gt; 인쇄 &gt; PDF로 저장</b><br></br>
+                계절학기 포함 모든 학기 PDF를 첨부해주세요.
             </div>
         </div>
     );
@@ -199,6 +208,10 @@ const styles = StyleSheet.create({
         lineHeight: '1.5',
         width: '105%',
         marginBottom: '100px',
+        cursor: 'pointer',
+        ':hover': {
+            textDecoration: 'underline',
+        }
     },
     divider: {
         border: 'none',
