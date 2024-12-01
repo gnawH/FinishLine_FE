@@ -43,7 +43,6 @@ function LectureTable() {
 const styles = StyleSheet.create({
     tableContainer: {
         width: '100%',
-        
     },
     table: {
         width: '100%',

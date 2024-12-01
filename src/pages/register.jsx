@@ -1,6 +1,6 @@
 import { StyleSheet, css } from 'aphrodite';
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/header';
 import Template from '../components/template';
 import Footer from '../components/footer';
@@ -98,6 +98,10 @@ const DEPARTMENTS = [
 ];
 
 function Register() {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const studentInfo = location.state?.studentInfo;
+
     const [userData, setUserData] = useState({
         name: '홍길동',
         department: '소프트웨어학과',
@@ -138,6 +142,13 @@ function Register() {
 
         fetchUserData();
     }, []);
+
+    useEffect(() => {
+        if (!studentInfo) {
+            navigate('/policy');
+            return;
+        }
+    }, [navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -212,7 +223,7 @@ function Register() {
                         <label>이름</label>
                         <input 
                             type="text" 
-                            value={userData.name}
+                            value={studentInfo?.name}
                             readOnly
                             className={css(styles.input, styles.readOnlyInput)} 
                         />
@@ -221,7 +232,7 @@ function Register() {
                         <label>학과</label>
                         <input 
                             type="text" 
-                            value={userData.department}
+                            value={studentInfo?.department}
                             readOnly
                             className={css(styles.input, styles.readOnlyInput)} 
                         />
@@ -230,7 +241,7 @@ function Register() {
                         <label>학번</label>
                         <input 
                             type="text" 
-                            value={userData.studentId}
+                            value={studentInfo?.studentId}
                             readOnly
                             className={css(styles.input, styles.readOnlyInput)}
                         />
