@@ -1,8 +1,10 @@
 import { StyleSheet, css } from 'aphrodite';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/header';
 import Template from '../components/template';
 import Footer from '../components/footer';
-import { useState, useEffect } from 'react';
+
 
 const MICRO_DEGREES = [
     { value: "MD001", label: "스마트시티 마이크로디그리" },
@@ -140,6 +142,12 @@ function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
+        // 복수/부/연계전공 선택 시 학과 선택 필수 검사
+        if (selectedMajorType && !selectedDepartment) {
+            setError('추가 전공 학과를 선택해주세요.');
+            return;
+        }
+        
         // 비밀번호 입력 여부 검사
         if (!password) {
             setError('FINISH LINE 회원가입을 위해 비밀번호를 설정해주세요.');
@@ -228,7 +236,9 @@ function Register() {
                         />
                     </div>
 
-                    <h2 className={css(styles.sectionTitle)}>추가 정보 설정</h2>
+                    <Link to="/completeLecture" className={css(styles.titleLink)}>
+                        <h2 className={css(styles.sectionTitle)}>추가 정보 설정</h2>
+                    </Link>
                     <div className={css(styles.inputGroup)}>
                         <label>복수/부/연계 전공</label>
                         <div className={css(styles.selectGroup)}>
@@ -450,6 +460,13 @@ const styles = StyleSheet.create({
         color: '#FF4B4B',
         fontSize: '14px',
         textAlign: 'center'
+    },
+    titleLink: {
+        textDecoration: 'none',
+        ':hover': {
+            cursor: 'pointer',
+            opacity: 0.8
+        }
     }
 });
 

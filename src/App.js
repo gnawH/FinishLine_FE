@@ -3,7 +3,7 @@ import Intro from './pages/intro';
 import Login from './pages/login';
 import Policy from './pages/policy';
 import Register from './pages/register';
-
+import CompleteLecture from './pages/completeLecture';
 function App() {
   return (
     <Router>
@@ -13,6 +13,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/policy" element={<Policy />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/completeLecture" element={<CompleteLecture />} />
         </Routes>
       </div>
     </Router>
