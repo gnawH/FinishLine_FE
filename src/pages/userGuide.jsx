@@ -1,9 +1,8 @@
-// src/pages/userGuide.js
-
-import React, { useState } from 'react'; // useState를 명시적으로 import
+import React, { useState, useEffect } from 'react'; // useState를 명시적으로 import, useEffect 추가
 import { useNavigate } from 'react-router-dom'; // useNavigate import 추가
 import { StyleSheet, css } from 'aphrodite';
 import Header from '../components/header';
+import UserHeader from '../components/userHeader'; // UserHeader import 추가
 import Footer from '../components/footer';
 import Template from '../components/template';
 import Modal from '../components/modal/loginService'; // 모달 컴포넌트 import
@@ -18,6 +17,13 @@ function UserGuide() {
     const navigate = useNavigate(); // 누락된 navigate 선언 추가
     const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
     const [modalContent, setModalContent] = useState(''); // 모달 내용 관리
+    const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 추가
+
+    // 컴포넌트 마운트 시 로그인 상태 확인
+    useEffect(() => {
+        const loginStatus = localStorage.getItem('isLoggedIn') === 'true';
+        setIsLoggedIn(loginStatus);
+    }, []);
 
     const openModal = (content) => {
         setModalContent(content); // 클릭된 버튼에 따라 모달 내용 설정
@@ -28,9 +34,30 @@ function UserGuide() {
         setIsModalOpen(false); // 모달 닫기
     };
 
+    const handleSubjectButtonClick = () => {
+        if (isLoggedIn) {
+            navigate('/completeLecture');
+        } else {
+            openModal('졸업요건 검사');
+        }
+    };
+
+    const handleRequirementsButtonClick = () => {
+        if (isLoggedIn) {
+            navigate('/graduationResults');  // 로그인 상태일 때 결과 페이지로 이동
+        } else {
+            openModal('졸업요건 검사');  // 비로그인 상태일 때 모달 표시
+        }
+    };
+
     return (
         <div className={css(styles.userGuideContainer)}>
-            <Header additionalBoldLink="/userGuide" /> {/* 특정 링크 강조 */}
+            {/* 로그인 상태에 따라 다른 헤더 렌더링 */}
+            {isLoggedIn ? (
+                <UserHeader additionalBoldLink="/userGuide" />
+            ) : (
+                <Header additionalBoldLink="/userGuide" />
+            )}
             <Template title="이용 가이드" />
             <span className={css(styles.subtitle)}>
                 FinishLine을 효과적으로 사용하는 방법을 안내합니다.
@@ -62,8 +89,9 @@ function UserGuide() {
                         </p>
                         {/* 회원가입 버튼 */}
                         <button
-                            className={css(styles.signupButton)}
-                            onClick={() => navigate('/policy')}
+                            className={css(styles.signupButton, isLoggedIn && styles.disabledButton)}
+                            onClick={() => !isLoggedIn && navigate('/policy')}
+                            disabled={isLoggedIn}
                         >
                             회원가입
                         </button>
@@ -84,8 +112,9 @@ function UserGuide() {
                             사용하여 로그인을 합니다.
                         </p>
                         <button
-                            className={css(styles.loginButton)}
-                            onClick={() => navigate('/login')}
+                            className={css(styles.loginButton, isLoggedIn && styles.disabledButton)}
+                            onClick={() => !isLoggedIn && navigate('/login')}
+                            disabled={isLoggedIn}
                         >
                             로그인
                         </button>
@@ -118,7 +147,7 @@ function UserGuide() {
                         </p>
                         <button
                             className={css(styles.subjectButton)}
-                            onClick={() => openModal('졸업요건 검사')} // 모달 열기
+                            onClick={handleSubjectButtonClick}
                         >
                             등록하기
                         </button>
@@ -150,7 +179,7 @@ function UserGuide() {
                         </p>
                         <button
                             className={css(styles.requirementsButton)}
-                            onClick={() => openModal('졸업요건 검사')} // 모달 열기
+                            onClick={handleRequirementsButtonClick}  // 새로운 핸들러 함수 사용
                         >
                             결과보기
                         </button>
@@ -328,6 +357,13 @@ const styles = StyleSheet.create({
         },
     },
 
+    disabledButton: {
+        backgroundColor: '#cccccc',
+        cursor: 'not-allowed',
+        ':hover': {
+            backgroundColor: '#cccccc',
+        }
+    },
 
 });
 

@@ -7,7 +7,7 @@ import CompleteLecture from './pages/completeLecture';
 import MyCompleteLecture from './pages/myCompleteLecture';
 import MyInfo from './pages/myInfo';
 import UserGuide from './pages/userGuide';
-
+import GraduateCheck from './pages/graduateCheck';
 function App() {
   return (
     <Router>
@@ -20,6 +20,7 @@ function App() {
           <Route path="/userGuide" element={<UserGuide />} />
           <Route path="/completeLecture" element={<CompleteLecture />} />
           <Route path="/myCompleteLecture" element={<MyCompleteLecture />} />
+          <Route path="/graduateCheck" element={<GraduateCheck />} />
           <Route path="/myInfo" element={<MyInfo />} />
         </Routes>
       </div>
