@@ -10,19 +10,32 @@ import { useState, useEffect } from 'react';
 function MyCompleteLecture() {
     const [searchCode, setSearchCode] = useState('');
     const [searchResult, setSearchResult] = useState([]);
+    const [completedLectures, setCompletedLectures] = useState([]);
 
     const handleSearch = async () => {
         try {
-            const response = await axios.get('/api/lectures', {
+            const response = await axios.get('/api/lectures/search', {
                 params: {
                     code: searchCode,
                 },
             });
             setSearchResult(response.data);
         } catch (error) {
-            console.error('Error searching lectures:', error);
+            console.error('강의 검색 중 오류:', error);
         }
     };
+
+    useEffect(() => {
+        const fetchCompletedLectures = async () => {
+            try {
+                const response = await axios.get('/api/lectures/completed');
+                setCompletedLectures(response.data);
+            } catch (error) {
+                console.error('기이수과목 목록 조회 중 오류:', error);
+            }
+        };
+        fetchCompletedLectures();
+    }, []);
 
     const handleAddLecture = async () => {
         try {
@@ -61,7 +74,11 @@ function MyCompleteLecture() {
                     </div>
                     {searchResult && (
                         <>
-                            <LectureTable data={searchResult} isSearchResult={true} />
+                            <LectureTable 
+                                data={searchResult} 
+                                isSearchResult={true} 
+                                api="/api/lectures/search"
+                            />
                             <div className={css(styles.addButtonContainer)}>
                                 <button 
                                     className={css(styles.addButton)}
@@ -82,7 +99,11 @@ function MyCompleteLecture() {
                 </div>
                 <div className={css(styles.uploadContainer)}>
                     <div className={css(styles.fileInputWrapper)}>
-                    <LectureTable />
+                        <LectureTable 
+                            data={completedLectures}
+                            isSearchResult={false}
+                            api="/api/lectures/completed"
+                        />
                     </div>
                 </div>
             </div>

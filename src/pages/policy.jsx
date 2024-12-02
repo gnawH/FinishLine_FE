@@ -1,11 +1,11 @@
 import { StyleSheet, css } from 'aphrodite';
 import { Link, useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
 import Header from '../components/header'; // Header 컴포넌트 
 import Template from '../components/template'; // Template 컴포넌트 import
 import Footer from '../components/footer'; // Footer 컴포넌트 import
 import ckuWhiteLogo from '../assets/images/ckuWhiteLogo.png'; // 학교 로고 이미지 import
 import timerIcon from '../assets/images/timer.png'; // 타이머 이미지 import
-import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 
 
@@ -337,10 +337,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         ':focus': {
         outline: 'auto 1px',                    // 기본 두께
-        outlineColor: '#006277',      // Chrome 기본 파란색
+        outlineColor: '#2B2A28',      // Chrome 기본 파란색
         outlineStyle: 'auto',                   // 기본 스타일
         outlineOffset: '0px',                   // 테두리와의 간격
-        borderColor: '#006277',       // 테두리 색상도 함께 변경
+        borderColor: '#2B2A28',       // 테두리 색상도 함께 변경
         boxShadow: '0 0 0 1px rgb(59, 153, 252)' // 약간의 그림자 효과
     }
     },

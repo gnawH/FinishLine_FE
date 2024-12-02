@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     },
     cell: {
         border: '1px solid #E0E0E0',
-        padding: '10px 0px',
+        // padding: '0px 0px',
         color: '#333333',
         fontSize: '11px',
         textAlign: 'center',

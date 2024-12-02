@@ -1,10 +1,22 @@
+import { useState } from 'react'
 import { StyleSheet, css } from 'aphrodite';
-import { useNavigate, Link } from 'react-router-dom'; // React Router의 Link 컴포넌트 import
+import { useNavigate, Link, useLocation } from 'react-router-dom'; // React Router의 Link 컴포넌트 import
+import Modal from '../components/modal/loginService'; // 모달 컴포넌트 import
 import logo1 from '../assets/images/logo1.png';
 
 // Header 컴포넌트
 function Header() {
     const navigate = useNavigate();
+    const location = useLocation();
+    const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
+
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
 
     const handleLoginClick = () => {
         navigate('/login');
@@ -13,19 +25,46 @@ function Header() {
 
     return (
         <header className={css(styles.header)}>
-             {/* 로고 */}
-            <img src={logo1} alt="Logo" className={css(styles.logo)} />
+             <Link to="/login">
+                <img src={logo1} alt="Logo" className={css(styles.logo)} />
+            </Link>
 
 
             {/* 네비게이션 및 로그인 버튼 */}
             <div className={css(styles.headerLinks)}>
                 <nav className={css(styles.navLinks)}>
-                    <Link to="/userGuide" className={css(styles.navLink)}>이용 가이드</Link>
-                    <Link to="/graduateCheck" className={css(styles.navLink)}>졸업 요건 검사</Link>
-                    <Link to="/기이수과목폴더 이름" className={css(styles.navLink)}>기이수 과목 관리</Link>  
+                    <Link
+                        to="/userGuide"
+                        className={css(
+                            styles.navLink,
+                            location.pathname === '/userGuide' && styles.activeNavLink // 현재 경로가 '/userGuide'일 때 스타일 추가
+                        )}
+                    >
+                        이용 가이드
+                    </Link>
+                    <span
+                        className={css(styles.navLink)}
+                        onClick={openModal} // 모달 열기
+                    >
+                        졸업 요건 검사
+                    </span>
+                    <span
+                        className={css(styles.navLink)}
+                        onClick={openModal} // 모달 열기
+                    >
+                        기이수 과목 관리
+                    </span>
                 </nav>
-                <button className={css(styles.loginButton)} onClick={handleLoginClick}>로그인</button>
+                <button
+                    className={css(styles.loginButton)}
+                    onClick={handleLoginClick} // alert 대신 handleLoginClick 함수 사용
+                >
+                    로그인
+                </button>
             </div>
+
+            {/* 모달 컴포넌트 */}
+            <Modal isOpen={isModalOpen} onClose={closeModal} />
         </header>
     );
 }
@@ -45,7 +84,7 @@ const styles = StyleSheet.create({
     logo: {
         height: '110px',
         width: 'auto',
-        marginTop: '3%',
+        marginTop: '10%',
         marginRight: 'auto',
         padding: '0 60px',
     },
@@ -57,6 +96,9 @@ const styles = StyleSheet.create({
         gap: '65px',
         marginTop: '2%',
         padding: '0 90px',
+    },
+    activeNavLink: {
+        fontWeight: 'bold', // 볼드 효과
     },
 
     // 네비게이션 링크 스타일
@@ -71,6 +113,7 @@ const styles = StyleSheet.create({
         textDecoration: 'none',
         color: '#2B2A28',
         fontFamily: 'Lato, sans-serif',
+        cursor: 'pointer', // 클릭 가능 스타일
     },
 
     // 로그인 버튼 스타일

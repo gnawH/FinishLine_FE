@@ -2,33 +2,35 @@ import { useState, useRef, useEffect } from 'react';
 import { StyleSheet, css } from 'aphrodite';
 import { Link } from 'react-router-dom';
 import logo3 from '../assets/images/logo3.png';
+import Modal from '../components/modal/loginService'; // 모달 컴포넌트 import 추가
 
 // Footer 컴포넌트
 function Footer() {
-    // const { t, i18n } = useTranslation(); // useTranslation 초기화, 다국어기능 
     const [isLanguageOpen, setIsLanguageOpen] = useState(false); // 언어 드롭다운 상태 관리
     const languageRef = useRef(null); // 드롭다운 메뉴 참조 생성
     const [isSitemapOpen, setIsSitemapOpen] = useState(false); // 사이트맵 드롭다운 상태 관리
     const sitemapRef = useRef(null); // 사이트맵 드롭다운 메뉴 참조 생성
+    const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 추가
 
     // 언어 드롭다운 토글
     const toggleLanguageDropdown = () => {
         setIsLanguageOpen((prev) => !prev);
+        setIsSitemapOpen(false); // 언어 드롭다운 열릴 때 사이트맵 드롭다운 닫기
     };
 
     // 사이트맵 드롭다운 토글
     const toggleSitemapDropdown = () => {
         setIsSitemapOpen((prev) => !prev);
+        setIsLanguageOpen(false); // 사이트맵 드롭다운 열릴 때 언어 드롭다운 닫기
     };
 
-    // 언어 선택 시 드롭다운 닫기
-    const handleLanguageSelect = () => {
-        setIsLanguageOpen(false);
+    // 메달 제어 함수 추가
+    const openModal = () => {
+        setIsModalOpen(true);
     };
 
-    // 사이트맵 선택 시 드롭다운 닫기
-    const handleSitemapSelect = () => {
-        setIsSitemapOpen(false);
+    const closeModal = () => {
+        setIsModalOpen(false);
     };
 
     // 메뉴 외부 클릭 시 드롭다운 닫기 설정
@@ -36,6 +38,9 @@ function Footer() {
         const handleClickOutside = (event) => {
             if (isLanguageOpen && languageRef.current && !languageRef.current.contains(event.target)) {
                 setIsLanguageOpen(false);
+            }
+            if (isSitemapOpen && sitemapRef.current && !sitemapRef.current.contains(event.target)) {
+                setIsSitemapOpen(false);
             }
         };
 
@@ -47,12 +52,9 @@ function Footer() {
 
     return (
         <footer className={css(styles.footer)}>
-
             {/* 푸터 왼쪽 영역 */}
             <div className={css(styles.footerLeft)}>
                 <div className={css(styles.footerLogoSection)}>
-
-                    {/* 로고 이미지 클릭 시 네이버 폼 링크로 연결 */}
                     <a
                         href="네이버 폼링크 넣기, 홈페이지에서 바로연결x 새창이 떠서 들어가기"
                         target="_blank"
@@ -60,8 +62,6 @@ function Footer() {
                     >
                         <img src={logo3} alt="Finish Line Logo" className={css(styles.footerLogo)} />
                     </a>
-
-
                     <p className={css(styles.footerLeftText)}>의 사용 후기를 알려주세요!</p>
                 </div>
                 <p className={css(styles.footerService)}>더 나은 서비스로 보답하겠습니다.</p>
@@ -79,8 +79,8 @@ function Footer() {
                         </button>
                         {isLanguageOpen && (
                             <div className={css(styles.dropdownMenu)}>
-                                <a href="" className={css(styles.dropdownLink)} onClick={handleLanguageSelect}>한국어</a>
-                                <a href="" className={css(styles.dropdownLink)} onClick={handleLanguageSelect}>English</a>
+                                <a href="" className={css(styles.dropdownLink)} onClick={() => setIsLanguageOpen(false)}>한국어</a>
+                                <a href="" className={css(styles.dropdownLink)} onClick={() => setIsLanguageOpen(false)}>English</a>
                             </div>
                         )}
                     </div>
@@ -90,10 +90,21 @@ function Footer() {
                         </button>
                         {isSitemapOpen && (
                             <div className={css(styles.dropdownMenu)}>
-                                <Link to="" className={css(styles.dropdownLink)} onClick={handleSitemapSelect}>이용가이드</Link>
-                                <Link to="" className={css(styles.dropdownLink)} onClick={handleSitemapSelect}>졸업요건검사</Link>
-                                <Link to="" className={css(styles.dropdownLink)} onClick={handleSitemapSelect}>기이수과목관리</Link>
-                                
+                                <Link to="/userGuide" className={css(styles.dropdownLink)} onClick={() => setIsSitemapOpen(false)}>
+                                    이용가이드
+                                </Link>
+                                <span className={css(styles.dropdownLink)} onClick={() => {
+                                    setIsSitemapOpen(false);
+                                    openModal();
+                                }}>
+                                    졸업요건검사
+                                </span>
+                                <span className={css(styles.dropdownLink)} onClick={() => {
+                                    setIsSitemapOpen(false);
+                                    openModal();
+                                }}>
+                                    기이수과목관리
+                                </span>
                             </div>
                         )}
                     </div>
@@ -106,6 +117,9 @@ function Footer() {
                     &copy; 2024 CKU Software Engineering student All rights reserved.
                 </p>
             </div>
+
+            {/* Modal 컴포넌트 추가 */}
+            <Modal isOpen={isModalOpen} onClose={closeModal} />
         </footer>
     );
 }
@@ -147,7 +161,7 @@ const styles = StyleSheet.create({
         marginTop: '20px',
         marginBottom: '0px',
         marginRight: '3px',
-        
+
     },
 
     // 사용후기 텍스트

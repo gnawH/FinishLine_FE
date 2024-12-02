@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import Header from '../components/header';
 import Template from '../components/template';
 import Footer from '../components/footer';
+import axios from 'axios';
 
 
 const MICRO_DEGREES = [
@@ -155,27 +156,16 @@ function Register() {
         }
 
         try {
-            const response = await fetch('/api/register/', {  // Django API 엔드포인트
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name: userData.name,
-                    department: userData.department,
-                    studentId: userData.studentId,
-                    majorType: selectedMajorType,
-                    secondMajor: selectedDepartment,
-                    microDegree: selectedMicroDegree,
-                    password: password
-                })
+            const response = await axios.post('/api/register/', {
+                name: userData.name,
+                department: userData.department,
+                studentId: userData.studentId,
+                majorType: selectedMajorType,
+                secondMajor: selectedDepartment,
+                microDegree: selectedMicroDegree,
+                password: password
             });
 
-            if (!response.ok) {
-                throw new Error('회원가입에 실패했습니다.');
-            }
-
-            const data = await response.json();
             // 회원가입 성공 시 처리 (예: 로그인 페이지로 이동)
             window.location.href = '/login';
             
