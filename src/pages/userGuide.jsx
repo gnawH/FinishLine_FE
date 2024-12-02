@@ -7,7 +7,6 @@ import Header from '../components/header';
 import Footer from '../components/footer';
 import Template from '../components/template';
 import Modal from '../components/modal/loginService'; // 모달 컴포넌트 import
-import logo2 from '../assets/images/logo2.png';
 import certification from '../assets/images/certification.png'; // 회원가입 및 학생인증
 import login from '../assets/images/login.png'; // 로그인
 import subject from '../assets/images/subject.png'; // 기이수 과목 등록

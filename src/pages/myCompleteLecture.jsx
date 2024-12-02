@@ -6,19 +6,17 @@ import UploadPDF from '../components/uploadPDF';
 import LectureTable from '../components/lectureTable';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function MyCompleteLecture() {
+    const navigate = useNavigate();
     const [searchCode, setSearchCode] = useState('');
     const [searchResult, setSearchResult] = useState([]);
-    const [completedLectures, setCompletedLectures] = useState([]);
+    const [subjects, setSubjects] = useState([]);
 
     const handleSearch = async () => {
         try {
-            const response = await axios.get('/api/lectures/search', {
-                params: {
-                    code: searchCode,
-                },
-            });
+            const response = await axios.get(`http://localhost:8000/pdf_save/api/search/${searchCode}/`);
             setSearchResult(response.data);
         } catch (error) {
             console.error('강의 검색 중 오류:', error);
@@ -26,26 +24,30 @@ function MyCompleteLecture() {
     };
 
     useEffect(() => {
-        const fetchCompletedLectures = async () => {
+        const fetchSubjects = async () => {
             try {
-                const response = await axios.get('/api/lectures/completed');
-                setCompletedLectures(response.data);
+                const response = await axios.get('http://localhost:8000/pdf_save/api/mysubjectlist/');
+                setSubjects(response.data);
             } catch (error) {
                 console.error('기이수과목 목록 조회 중 오류:', error);
             }
         };
-        fetchCompletedLectures();
+        fetchSubjects();
     }, []);
 
-    const handleAddLecture = async () => {
+    const handleAddLecture = async (lectureCode) => {
         try {
-            const response = await axios.post('/api/lectures', {
-                code: document.querySelector('select')?.value,
+            const response = await axios.post('http://localhost:8000/pdf_save/api/addsubject/', {
+                code: lectureCode
             });
-            setSearchResult(prevResult => [...prevResult, response.data]);
+            setSubjects(prevSubjects => [...prevSubjects, response.data]);
         } catch (error) {
-            console.error('Error adding lecture:', error);
+            console.error('강의 추가 중 오류:', error);
         }
+    };
+
+    const handleSubTitleClick = () => {
+        navigate('/myInfo');
     };
 
     return (
@@ -56,7 +58,9 @@ function MyCompleteLecture() {
                 <div className={css(styles.titleContainer)}>
                     <h2 className={css(styles.title)}>과목 직접 추가</h2>
                     <hr className={css(styles.divider)} />
-                    <div className={css(styles.subTitle)}>과목 코드로 검색</div>
+                    <div className={css(styles.subTitle)} onClick={handleSubTitleClick}>
+                        과목 코드로 검색
+                    </div>
                     <div className={css(styles.searchContainer)}>
                         <input
                             type="text"
@@ -72,23 +76,12 @@ function MyCompleteLecture() {
                             검색
                         </button>
                     </div>
-                    {searchResult && (
-                        <>
-                            <LectureTable 
-                                data={searchResult} 
-                                isSearchResult={true} 
-                                api="/api/lectures/search"
-                            />
-                            <div className={css(styles.addButtonContainer)}>
-                                <button 
-                                    className={css(styles.addButton)}
-                                    onClick={handleAddLecture}
-                                    disabled={!document.querySelector('select')?.value}
-                                >
-                                    추가하기
-                                </button>
-                            </div>
-                        </>
+                    {searchResult.length > 0 && (
+                        <LectureTable 
+                            subjects={searchResult}
+                            onAddLecture={handleAddLecture}
+                            isSearchResult={true}
+                        />
                     )}
                 </div>
             </div>
@@ -100,7 +93,7 @@ function MyCompleteLecture() {
                 <div className={css(styles.uploadContainer)}>
                     <div className={css(styles.fileInputWrapper)}>
                         <LectureTable 
-                            data={completedLectures}
+                            data={subjects}
                             isSearchResult={false}
                             api="/api/lectures/completed"
                         />
@@ -233,6 +226,10 @@ const styles = StyleSheet.create({
         color: '#006277',
         textAlign: 'center',
         marginTop: '23px',
+        cursor: 'pointer',
+        ':hover': {
+            textDecoration: 'underline',
+        }
     },
     searchContainer: {
         display: 'flex',

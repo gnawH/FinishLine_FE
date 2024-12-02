@@ -128,7 +128,7 @@ function Register() {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        //e.preventDefault();
         
         // 복수/부/연계전공 선택 시 학과 선택 필수 검사
         if (selectedMajorType && !selectedDepartment) {
@@ -155,23 +155,34 @@ function Register() {
             return;
         }
 
+        const formData = {
+            name: userData.name,
+            department: userData.department,
+            studentId: userData.studentId,
+            majortype: selectedMajorType,
+            secondmajor: selectedDepartment,
+            microdegree: selectedMicroDegree,
+            password: password,
+        };
+
         try {
-            const response = await axios.post('/api/register/', {
-                name: userData.name,
-                department: userData.department,
-                studentId: userData.studentId,
-                majorType: selectedMajorType,
-                secondMajor: selectedDepartment,
-                microDegree: selectedMicroDegree,
-                password: password
+            const response = await axios.post('http://127.0.0.1:8000/user_auth/user_signup/', formData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
             });
 
-            // 회원가입 성공 시 처리 (예: 로그인 페이지로 이동)
-            window.location.href = '/login';
-            
+            // 성공 시 처리
+            console.log('회원가입 성공:', response.data);
         } catch (error) {
-            setError('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
-            console.error('회원가입 오류:', error);
+            // 에러 처리 로직이 더 상세화됨
+            if (error.response) {
+                console.error('회원가입 오류:', error.response.data);
+            } else if (error.request) {
+                console.error('응답이 없습니다:', error.request);
+            } else {
+                console.error('오류 발생:', error.message);
+            }
         }
     };
 

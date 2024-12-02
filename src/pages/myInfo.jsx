@@ -1,13 +1,13 @@
 import { StyleSheet, css } from 'aphrodite';
-import Header from '../components/header'; // Header 컴포넌트 
+import UserHeader from '../components/userHeader'; // Header 컴포넌트 
 import Template from '../components/template'; // Template 컴포넌트 import
 import Footer from '../components/footer'; // Footer 컴포넌트 import
 
 function MyInfo() {
     return (
         <div className={css(styles.myInfoContainer)}>
-            <Header />
-            <Template title="내 정보" />
+            <UserHeader />
+            <Template title="마이페이지" />
             <Footer />
         </div>
     );

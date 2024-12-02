@@ -8,6 +8,22 @@ function UserHeader({ additionalBoldLink }) {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false); // 드롭다운 상태 관리
     const dropdownRef = useRef(null); // 드롭다운 참조 생성
     const navigate = useNavigate(); // 페이지 이동을 위한 useNavigate
+    const [userName, setUserName] = useState('');
+
+    useEffect(() => {
+        // localStorage에서 사용자 이름 가져오기
+        const storedUserName = localStorage.getItem('userName');
+        if (storedUserName) {
+            setUserName(storedUserName);
+        }
+    }, []);
+
+    const handleLogout = () => {
+        // 로그아웃 시 localStorage 클리어
+        localStorage.removeItem('userName');
+        localStorage.removeItem('isLoggedIn');
+        navigate('/login');
+    };
 
     // 드롭다운 토글
     const toggleDropdown = () => {
@@ -32,7 +48,7 @@ function UserHeader({ additionalBoldLink }) {
         <header className={css(styles.userHeader)}>
 
             {/* 로고 홈 버튼. */}
-            <Link to="/login">
+            <Link to="/userGuide">
                 <img src={logo1} alt="Logo" className={css(styles.logo)} />
             </Link>
 
@@ -45,7 +61,7 @@ function UserHeader({ additionalBoldLink }) {
                     <Link to="/graduateCheck" className={css(styles.navLink, additionalBoldLink === '/graduateCheck' && styles.bold)}>졸업 요건 검사</Link>
 
                     {/* 기이수 과목 링크 점검 */}
-                    <Link to="/임시" className={css(styles.navLink, additionalBoldLink === '/임시' && styles.bold)}>기이수 과목 관리</Link>
+                    <Link to="/completeLecture" className={css(styles.navLink, additionalBoldLink === '/completeLecture' && styles.bold)}>기이수 과목 관리</Link>
 
                     {/* 사용자 인사말 */}
                     <div className={css(styles.helloContainer)} ref={dropdownRef}>
@@ -54,7 +70,7 @@ function UserHeader({ additionalBoldLink }) {
                             className={css(styles.user)}
                             onClick={toggleDropdown} // 드롭다운 토글
                         >
-                            홍길동님
+                            {userName}님
                         </span>
                         {isDropdownOpen && (
                             <div className={css(styles.dropdownMenu)}>
@@ -66,7 +82,7 @@ function UserHeader({ additionalBoldLink }) {
                                 </div>
                                 <div
                                     className={css(styles.dropdownLink)}
-                                    onClick={() => navigate('/login')} // 로그인 페이지로 이동
+                                    onClick={handleLogout} // 로그아웃 페이지로 이동
                                 >
                                     로그아웃
                                 </div>
@@ -87,8 +103,8 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center', // 세로축 정렬 (중앙 정렬)
         justifyContent: 'space-between', // 양쪽 정렬
-        padding: '10px 20px', // 위아래 여백 추가
-        boxSizing: 'border-box', // 패딩 포함 크기 계산
+        // padding: '10px 20px', // 위아래 여백 추가
+        // boxSizing: 'border-box', // 패딩 포함 크기 계산
     },
 
     // 로고 스타일
@@ -97,6 +113,7 @@ const styles = StyleSheet.create({
         width: 'auto',
         marginRight: 'auto',
         marginTop: '10%',
+        padding: '0 60px',
     },
 
     // 헤더 링크 섹션 스타일
@@ -104,13 +121,16 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center', // 수직 정렬
         gap: '50px', // 링크 간격
+        gap: '65px',
+        marginTop: '2%',
+        padding: '0 90px',
     },
 
     // 네비게이션 링크 스타일
     navLinks: {
         display: 'flex',
         alignItems: 'center',
-        gap: '30px', // 각 네비게이션 간격
+        gap: '50px', // 각 네비게이션 간격
     },
 
     // 공통 링크 스타일

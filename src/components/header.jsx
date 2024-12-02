@@ -25,7 +25,7 @@ function Header() {
 
     return (
         <header className={css(styles.header)}>
-             <Link to="/login">
+             <Link to="/userGuide">
                 <img src={logo1} alt="Logo" className={css(styles.logo)} />
             </Link>
 
